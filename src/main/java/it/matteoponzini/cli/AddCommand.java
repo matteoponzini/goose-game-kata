@@ -1,6 +1,7 @@
 package it.matteoponzini.cli;
 
 import it.matteoponzini.board.Board;
+import it.matteoponzini.game.Player;
 
 public class AddCommand implements Command<Board> {
     //TODO: add javadoc
@@ -15,7 +16,9 @@ public class AddCommand implements Command<Board> {
         if(args.length <= 0){
             throw new IllegalArgumentException("argument must be greater than zero");
         }
-        System.out.println("ADD");
+        //TODO: controlare che esiste almeno un nome spazio multi giocatri ciclare se è maggiore di uno e aggiungere
+        board.addPlayer(new Player((String) args[1]));
+
     }
 
 }

@@ -20,6 +20,6 @@ public class ThrowingRandom implements ThrowingStrategy {
      */
     @Override
     public Integer throwing() {
-        return new Random(System.currentTimeMillis()).nextInt(maxNumber)+minNumber;
+        return new Random().nextInt(maxNumber)+minNumber;
     }
 }

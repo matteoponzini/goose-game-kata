@@ -15,7 +15,7 @@ public class Start {
         Board board = new Board();
         CommandFactory commandFactory = new CommandFactory();
         while (true){
-            System.out.print("Inserisci il comando");
+            System.out.print("Inserisci il comando: ");
             String userInput = scanner.nextLine();
             String[] splitedInput = userInput.split("[ ]+");
             Command<Board> command = CommandFactory.getTypeCommand(splitedInput[0]);

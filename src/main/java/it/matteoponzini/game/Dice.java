@@ -17,6 +17,10 @@ public class Dice {
         this.setFace(face);
         throwingStrategy = new ThrowingRandom(1, face);
     }
+    public Dice() {
+        this.setFace(6);
+        throwingStrategy = new ThrowingRandom(1, face);
+    }
 
     /**
      * @since 1.0-ALPHA
