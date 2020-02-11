@@ -14,46 +14,24 @@ import java.util.*;
 //TODO: javadoc
 public class Board {
     private List<PositionPlayer> positionPlayers;
-    private PlayerStrategy<PositionPlayer> addPlayerStrategy;
+    private PlayerStrategy<PositionPlayer> addPlayerStrategy = new AddPlayer();;
     private PlayerStrategy<PositionPlayer> removePlayerStrategy;
-    private PlayerStrategy<PositionPlayer> movePlayerStrategy;
-    private WinStrategy winStrategy;
-    public EventManager eventManager;
-    Map<Integer, BoostStrategy> boostPosition = new HashMap<>();
-
+    private PlayerStrategy<PositionPlayer> movePlayerStrategy = new MovePlayer();
+    private WinStrategy winStrategy = new WinPositionMax();
+    public EventManager eventManager = new EventManager();
 
     public Board(List<PositionPlayer> positionPlayers) {
         this.positionPlayers = positionPlayers;
-        this.addPlayerStrategy = new AddPlayer();
-        this.movePlayerStrategy = new MovePlayer();
-        this.winStrategy = new WinPositionMax();
-        this.eventManager = new EventManager();
-        this.eventManager.subscribe("roll", new DiceRollsListener());
-        this.eventManager.subscribe("add", new AddPlayerListener());
-        this.eventManager.subscribe("win", new WinListener());
-        this.eventManager.subscribe("draw", new DrawListener());
-        this.eventManager.subscribe("boost", new BoostListener());
+        this.init();
     }
     public Board(){
         this.positionPlayers = new ArrayList<>();
-        this.addPlayerStrategy = new AddPlayer();
-        this.movePlayerStrategy = new MovePlayer();
-        this.winStrategy = new WinPositionMax();
-        this.eventManager = new EventManager();
-        this.eventManager.subscribe("roll", new DiceRollsListener());
-        this.eventManager.subscribe("add", new AddPlayerListener());
-        this.eventManager.subscribe("win", new WinListener());
-        this.eventManager.subscribe("draw", new DrawListener());
-        this.eventManager.subscribe("boost", new BoostListener());
+        this.init();
     }
 
     public Board addPlayer(Player player) throws PlayerAlredyExistExeptionException, PlayerNotExistException {
         addPlayerStrategy.execute(player, positionPlayers);
         this.eventManager.notify("add", player);
-        return this;
-    }
-
-    public Board removePlayer(Player player){
         return this;
     }
 
@@ -118,7 +96,13 @@ public class Board {
         }
         return this;
     }
-
+    private void init(){
+        this.eventManager.subscribe("roll", new DiceRollsListener());
+        this.eventManager.subscribe("add", new AddPlayerListener());
+        this.eventManager.subscribe("win", new WinListener());
+        this.eventManager.subscribe("draw", new DrawListener());
+        this.eventManager.subscribe("boost", new BoostListener());
+    }
     public List<PositionPlayer> getPositionPlayers() {
         return positionPlayers;
     }
@@ -151,10 +135,31 @@ public class Board {
         this.movePlayerStrategy = movePlayerStrategy;
     }
 
+    public WinStrategy getWinStrategy() {
+        return winStrategy;
+    }
+
+    public void setWinStrategy(WinStrategy winStrategy) {
+        this.winStrategy = winStrategy;
+    }
+
+    public EventManager getEventManager() {
+        return eventManager;
+    }
+
+    public void setEventManager(EventManager eventManager) {
+        this.eventManager = eventManager;
+    }
+
     @Override
     public String toString() {
         return "Board{" +
                 "positionPlayers=" + positionPlayers +
+                ", addPlayerStrategy=" + addPlayerStrategy +
+                ", removePlayerStrategy=" + removePlayerStrategy +
+                ", movePlayerStrategy=" + movePlayerStrategy +
+                ", winStrategy=" + winStrategy +
+                ", eventManager=" + eventManager +
                 '}';
     }
 

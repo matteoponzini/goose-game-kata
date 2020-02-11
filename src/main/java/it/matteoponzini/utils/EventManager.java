@@ -53,4 +53,12 @@ public class EventManager {
             throw new NullPointerException("Element not exist");
         }
     }
+
+    public Map<String, List<EventListener>> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(Map<String, List<EventListener>> listeners) {
+        this.listeners = listeners;
+    }
 }

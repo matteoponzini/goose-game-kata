@@ -13,7 +13,6 @@ public class MovePlayer implements PlayerStrategy<PositionPlayer> {
         if(player == null || positionPlayers == null){
             throw new IllegalArgumentException("argument cannot be null");
         }
-
         PositionPlayer positionPlayer = positionPlayers.stream().filter(element->element.getPlayer().equals(player)).findFirst().orElse(null);
         if(positionPlayer == null){
             throw new PlayerNotExistException("Selected user does not exist");
