@@ -2,14 +2,13 @@ package it.matteoponzini.board;
 
 import it.matteoponzini.game.Player;
 import it.matteoponzini.game.PositionPlayer;
-import it.matteoponzini.output.AddPlayerListener;
-import it.matteoponzini.output.DiceRollsListener;
-import it.matteoponzini.output.DrawListener;
-import it.matteoponzini.output.WinListener;
+import it.matteoponzini.output.*;
 import it.matteoponzini.utils.*;
+import org.reflections.Reflections;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
 //TODO: javadoc
 public class Board {
     private List<PositionPlayer> positionPlayers;
@@ -18,6 +17,7 @@ public class Board {
     private PlayerStrategy<PositionPlayer> movePlayerStrategy;
     private WinStrategy winStrategy;
     public EventManager eventManager;
+    Map<Integer, BoostStrategy> boostPosition = new HashMap<>();
 
 
     public Board(List<PositionPlayer> positionPlayers) {
@@ -30,6 +30,7 @@ public class Board {
         this.eventManager.subscribe("add", new AddPlayerListener());
         this.eventManager.subscribe("win", new WinListener());
         this.eventManager.subscribe("draw", new DrawListener());
+        this.eventManager.subscribe("boost", new BoostListener());
     }
     public Board(){
         this.positionPlayers = new ArrayList<>();
@@ -41,6 +42,7 @@ public class Board {
         this.eventManager.subscribe("add", new AddPlayerListener());
         this.eventManager.subscribe("win", new WinListener());
         this.eventManager.subscribe("draw", new DrawListener());
+        this.eventManager.subscribe("boost", new BoostListener());
     }
 
     public Board addPlayer(Player player){
@@ -53,7 +55,7 @@ public class Board {
         return this;
     }
 
-    public Board movePlayer(Player player){
+    public Board movePlayer(Player player) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         PositionPlayer positionPlayer = movePlayerStrategy.execute(player, positionPlayers);
         switch (winStrategy.execute(positionPlayer)){
             case WIN:
@@ -64,7 +66,53 @@ public class Board {
                 positionPlayer.setLastPosition(positionPlayer.getLastPosition()-4);
                 break;
             default:
-                this.eventManager.notify("roll", positionPlayer);
+                boolean boost = false;
+                boolean show = true;
+                Reflections ref = new Reflections("it.matteoponzini.boost");
+                Iterator<Class<?>> iterator = ref.getTypesAnnotatedWith(Position.class).iterator();
+                while (iterator.hasNext() && !boost){
+                    Class<?> cl = iterator.next();
+                    Position findable = cl.getAnnotation(Position.class);
+                    BoostStrategy  boostStrategy = (BoostStrategy) cl.getDeclaredConstructor().newInstance();
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.append("Player: ")
+                            .append(positionPlayer.getPlayer().getName())
+                            .append(" rolls ")
+                            .append(positionPlayer.getFirstDice())
+                            .append(", ")
+                            .append(positionPlayer.getSecondDice())
+                            .append(" ")
+                            .append(positionPlayer.getPlayer().getName()).append(" moves from ");
+                    if(positionPlayer.getLastPosition() == 0){
+                        stringBuilder.append("Start to ");
+                    }else{
+                        stringBuilder.append(positionPlayer.getLastPosition())
+                                .append(" to ");
+                    }
+                    for (Integer find: findable.positon()) {
+                        if(find == positionPlayer.getPosition()){
+                            boost = true;
+                            show = false;
+                            boostStrategy.execute(positionPlayer);
+                            if(positionPlayer.getLastPosition() != 0){
+                                stringBuilder.append(positionPlayer.getLastPosition()).append(" ");
+                            }
+                            stringBuilder.append(findable.name())
+                                    .append(" ")
+                                    .append(positionPlayer.getPlayer().getName())
+                                    .append(" ").append(findable.action())
+                                    .append(" to ");
+                        }
+                    }
+                    if(boost){
+                        stringBuilder.append(positionPlayer.getPosition());
+                        this.eventManager.notify("boost", stringBuilder);
+                    }
+                }
+                if(show) {
+                    this.eventManager.notify("roll", positionPlayer);
+                }
+                break;
         }
         return this;
     }
