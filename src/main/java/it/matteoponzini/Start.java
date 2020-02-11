@@ -6,6 +6,7 @@ import it.matteoponzini.cli.Command;
 import it.matteoponzini.cli.CommandFactory;
 import it.matteoponzini.game.Dice;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -19,7 +20,11 @@ public class Start {
             String userInput = scanner.nextLine();
             String[] splitedInput = userInput.split("[ ]+");
             Command<Board> command = CommandFactory.getTypeCommand(splitedInput[0]);
-            command.execute(splitedInput, board);
+            try {
+                command.execute(splitedInput, board);
+            } catch (InvocationTargetException | NoSuchMethodException | InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
