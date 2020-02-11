@@ -61,7 +61,9 @@ public class PositionPlayer {
     public String toString() {
         return "PositionPlayer{" +
                 "player=" + player +
-                ", position=" + getPosition() +
+                ", firstDice=" + firstDice +
+                ", secondDice=" + secondDice +
+                ", lastPosition=" + lastPosition +
                 '}';
     }
 }

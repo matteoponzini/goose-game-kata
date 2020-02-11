@@ -6,12 +6,18 @@ public class EventManager {
     Map<String, List<EventListener>> listeners = new HashMap<>();
 
     public EventManager(String ... eventType) {
+        if(eventType == null){
+            throw new IllegalArgumentException("argument cannot be null");
+        }
         for (String event : eventType) {
             this.listeners.put(event, new ArrayList<EventListener>());
         }
     }
 
     public void subscribe(String eventType, EventListener listener) {
+        if(eventType == null || listener == null){
+            throw new IllegalArgumentException("argument cannot be null");
+        }
         if(listeners.containsKey(eventType)){
             List<EventListener> events = listeners.get(eventType);
             events.add(listener);
@@ -23,18 +29,28 @@ public class EventManager {
     }
 
     public void unsubscribe(String eventType, EventListener listener) {
+        if(eventType == null || listener == null){
+            throw new IllegalArgumentException("argument cannot be null");
+        }
         if(listeners.containsKey(eventType)) {
             List<EventListener> events = listeners.get(eventType);
             events.remove(listener);
         }else{
-            //TODO:eccezzione non esiste
+            throw new NullPointerException("Element not exist");
         }
     }
 
     public void notify(String eventType, Object object) {
-        List<EventListener> users = listeners.get(eventType);
-        for (EventListener listener : users) {
-            System.out.println(listener.notify(eventType, object));
+        if(eventType == null || object == null){
+            throw new IllegalArgumentException("argument cannot be null");
+        }
+        if(listeners.containsKey(eventType)){
+            List<EventListener> users = listeners.get(eventType);
+            for (EventListener listener : users) {
+                System.out.println(listener.notify(eventType, object));
+            }
+        }else{
+            throw new NullPointerException("Element not exist");
         }
     }
 }

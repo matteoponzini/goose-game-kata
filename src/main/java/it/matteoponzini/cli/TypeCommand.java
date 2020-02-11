@@ -10,6 +10,9 @@ public enum TypeCommand {
     HELP;
 
     static public  TypeCommand getTypeCommand(String value) {
+        if(value == null){
+            throw new IllegalArgumentException("argument cannot be null");
+        }
         try {
             return  TypeCommand.valueOf(value);
         } catch (IllegalArgumentException ex) {

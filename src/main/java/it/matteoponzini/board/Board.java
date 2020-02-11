@@ -1,5 +1,7 @@
 package it.matteoponzini.board;
 
+import it.matteoponzini.exception.PlayerAlredyExistExeptionException;
+import it.matteoponzini.exception.PlayerNotExistException;
 import it.matteoponzini.game.Player;
 import it.matteoponzini.game.PositionPlayer;
 import it.matteoponzini.output.*;
@@ -45,7 +47,7 @@ public class Board {
         this.eventManager.subscribe("boost", new BoostListener());
     }
 
-    public Board addPlayer(Player player){
+    public Board addPlayer(Player player) throws PlayerAlredyExistExeptionException, PlayerNotExistException {
         addPlayerStrategy.execute(player, positionPlayers);
         this.eventManager.notify("add", player);
         return this;
@@ -55,7 +57,7 @@ public class Board {
         return this;
     }
 
-    public Board movePlayer(Player player) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    public Board movePlayer(Player player) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, PlayerAlredyExistExeptionException, PlayerNotExistException {
         PositionPlayer positionPlayer = movePlayerStrategy.execute(player, positionPlayers);
         switch (winStrategy.execute(positionPlayer)){
             case WIN:

@@ -10,6 +10,9 @@ public class ThrowingRandom implements ThrowingStrategy {
     Integer maxNumber;
 
     public ThrowingRandom(Integer minNumber, Integer maxNumber) {
+        if(minNumber == null || maxNumber == null){
+            throw new IllegalArgumentException("argument cannot be null");
+        }
         this.minNumber = minNumber;
         this.maxNumber = maxNumber;
     }

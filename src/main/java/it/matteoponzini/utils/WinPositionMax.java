@@ -6,6 +6,9 @@ import it.matteoponzini.game.WinType;
 public class WinPositionMax implements WinStrategy {
     @Override
     public WinType execute(PositionPlayer positionPlayer) {
+        if(positionPlayer == null){
+            throw new IllegalArgumentException("argument cannot be null");
+        }
         if(positionPlayer.getPosition() > 63){
             return WinType.WIN;
         }else if(positionPlayer.getPosition() == 63){
